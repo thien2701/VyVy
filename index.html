@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gửi Tường Vy</title>
+    <style>
+        /* Toàn bộ giao diện & Phông nền */
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(rgba(245, 230, 232, 0.6), rgba(220, 200, 205, 0.6)), url('background.jpg') no-repeat center center/cover;
+            color: #4a4a4a;
+            overflow: hidden;
+        }
+
+        /* Khung nội dung chính */
+        .container {
+            background: rgba(255, 255, 255, 0.92);
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(163, 114, 123, 0.2);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.4s ease;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            position: relative;
+        }
+
+        /* Quản lý các slide */
+        .slide {
+            display: none;
+            width: 100%;
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Kiểu dáng Chữ, Ô nhập liệu & Nút */
+        h2, h3 {
+            color: #8c5561;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            font-weight: 600;
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #615557;
+        }
+
+        input[type="text"] {
+            width: 85%;
+            padding: 12px 15px;
+            margin: 15px 0;
+            border: 1.5px solid #e3c4cb;
+            border-radius: 10px;
+            outline: none;
+            font-size: 16px;
+            text-align: center;
+            color: #555;
+            background-color: #fff9fa;
+            transition: border 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #bfa0a6;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: #bfa0a6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 15px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(191, 160, 166, 0.2);
+        }
+
+        button:hover {
+            background: #a6848b;
+            transform: translateY(-2px);
+        }
+
+        /* Nút phụ / Nút màu xám nhẹ */
+        button.btn-alt {
+            background: #dbcfd1;
+            color: #6b5c5e;
+            box-shadow: none;
+        }
+
+        button.btn-alt:hover {
+            background: #c7b9bc;
+        }
+
+        /* Nút mũi tên chuyển tiếp (->) */
+        .arrow-btn {
+            background: none;
+            border: 2px solid #bfa0a6;
+            color: #bfa0a6;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            padding: 0;
+            font-size: 20px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            box-shadow: none;
+            cursor: pointer; /* Đảm bảo con trỏ chuột là hình bàn tay */
+            position: relative; /* Thêm để z-index có tác dụng */
+            z-index: 10; /* Đưa nút lên lớp trên cùng */
+        }
+
+        .arrow-btn:hover {
+            background: #bfa0a6;
+            color: white;
+            transform: translateX(3px);
+        }
+
+        /* Thông báo lỗi */
+        .error-msg {
+            color: #d65a6f;
+            font-size: 14px;
+            margin-top: 8px;
+            display: none;
+            font-weight: 500;
+        }
+
+        /* Cập nhật kiểu dáng cho video */
+        video {
+            display: block; /* Đảm bảo video là một block */
+            width: 80%; /* Video nhỏ hơn một chút, 80% chiều rộng khung chứa */
+            margin: 10px auto; /* Căn giữa và thêm khoảng cách */
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Khung hiển thị ảnh ngẫu nhiên */
+        .image-placeholder {
+            width: 100%;
+            max-height: 250px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin: 15px 0;
+            background: #eee;
+        }
+
+        /* CSS kết nối bị ngắt */
+        .disconnected {
+            background: #111 !important;
+            color: #666 !important;
+            box-shadow: none !important;
+            border: none !important;
+            transition: background 2s ease;
+        }
+        .disconnected h2 { color: #888; }
+        .disconnected p { color: #555; }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="mainContainer">
+        
+        <!-- SLIDE 1: Nhập tên -->
+        <div id="slide-name" class="slide active">
+            <h2>Chào mừng bạn!</h2>
+            <p>Hãy điền họ và tên của bạn:</p>
+            <input type="text" id="nameInput" placeholder="Họ và tên của bạn...">
+            <br>
+            <button onclick="checkName()">Xác nhận</button>
+            <div id="errorText" class="error-msg">Error, hãy điền tên thật của bạn</div>
+        </div>
+
+        <!-- SLIDE 2: Lời chào mừng -->
+        <div id="slide-welcome" class="slide">
+            <p>Xin chào Tường Vy tôi rất vui khi bạn click vào trang web này, mong là bạn sẽ đi đến cuối, không mất nhiều thời gian đâu</p>
+            <button class="arrow-btn" onclick="showSlide('slide-video')">→</button>
+        </div>
+
+        <!-- SLIDE 3: Phát Video 06.mp4 -->
+        <div id="slide-video" class="slide">
+            <p>Đoạn video ngắn dành cho bạn</p>
+            <!-- Đường dẫn video lấy đúng từ thư mục static như ảnh bạn gửi -->
+            <video id="myVideo" controls>
+                <source src="06.mp4" type="video/mp4">
+                Trình duyệt không hỗ trợ phát video này.
+            </video>
+            <br>
+            <button class="arrow-btn" onclick="showSlide('slide-continue-ask')">→</button>
+        </div>
+
+        <!-- SLIDE 4: Hỏi tiếp tục trang web -->
+        <div id="slide-continue-ask" class="slide">
+            <h2>Bạn có muốn tiếp tục dùng trang web này ?</h2>
+            <p>Nếu bạn chọn không trang web này sẽ biến mất</p>
+            <div class="button-group">
+                <button class="btn-alt" onclick="showSlide('slide-branch1-sure')">Không</button>
+                <button onclick="showSlide('slide-branch2-pronoun')">Tiếp</button>
+            </div>
+        </div>
+
+        <!-- ================= NHÁNH 1 ================= -->
+        <!-- Bạn chắc chắn chứ? -->
+        <div id="slide-branch1-sure" class="slide">
+            <h2>Bạn chắc chắn chứ?</h2>
+            <div class="button-group">
+                <button class="btn-alt" onclick="showSlide('slide-branch1-thinktwice')">Chắc chắn</button>
+                <button onclick="showSlide('slide-branch2-pronoun')">Không, tôi muốn xem tiếp</button>
+            </div>
+        </div>
+
+        <!-- Không nghĩ lại thật sao? -->
+        <div id="slide-branch1-thinktwice" class="slide">
+            <h2>Không nghĩ lại thật sao?</h2>
+            <div class="button-group">
+                <button class="btn-alt" onclick="goToBranch3()">Đúng vậy</button>
+                <button onclick="showSlide('slide-branch2-pronoun')">Tôi sẽ xem tiếp</button>
+            </div>
+        </div>
+
+        <!-- ================= NHÁNH 2 ================= -->
+        <!-- Hỏi xưng hô anh em -->
+        <div id="slide-branch2-pronoun" class="slide">
+            <h2>Lần cuối cùng hãy cho phép tôi xưng hô với bạn là anh và em nhé</h2>
+            <div class="button-group">
+                <button class="btn-alt" onclick="showImageSlide(1)">Không</button>
+                <button onclick="showImageSlide(2)">Được</button>
+            </div>
+        </div>
+
+        <!-- Hiển thị ảnh thứ nhất -->
+        <div id="slide-img1" class="slide">
+            <img src="anh1.jpg" alt="Bức ảnh thứ nhất" class="image-placeholder" onerror="this.style.display='none'; alert('Mẹo: Bạn có thể thêm file anh1.jpg vào thư mục để hiển thị ảnh tại đây nhé!')">
+            <p>(Đang hiển thị bức ảnh thứ nhất)</p>
+            <button class="arrow-btn" onclick="showSlide('slide-regret-ask')">→</button>
+        </div>
+
+        <!-- Hiển thị ảnh thứ hai -->
+        <div id="slide-img2" class="slide">
+            <img src="anh2.jpg" alt="Bức ảnh thứ hai" class="image-placeholder" onerror="this.style.display='none'; alert('Mẹo: Bạn có thể thêm file anh2.jpg vào thư mục để hiển thị ảnh tại đây nhé!')">
+            <p>(Đang hiển thị bức ảnh thứ hai)</p>
+            <button class="arrow-btn" onclick="showSlide('slide-regret-ask')">→</button>
+        </div>
+
+        <!-- ================= SƠ ĐỒ 3: NUỐI TIẾC ================= -->
+        <!-- Bạn có còn nuối tiếc không -->
+        <div id="slide-regret-ask" class="slide">
+            <h2>Bạn có còn nuối tiếc không?</h2>
+            <div class="button-group">
+                <button class="btn-alt" onclick="goToBranch3FromRegret()">Đủ rồi Thiện, chúng ta đã chia tay, tạm biệt bạn</button>
+                <button onclick="showSlide('slide-branch5')">Có</button>
+            </div>
+        </div>
+
+        <!-- Nhánh 5: Nếu còn điều gì chưa nói ra -->
+        <div id="slide-branch5" class="slide">
+            <h2>Nếu còn điều gì chưa nói ra hãy bấm vào đây</h2>
+            <button style="margin-top: 15px; background: #c27d88;" onclick="showSlide('slide-final-messenger')">Bấm vào đây</button>
+        </div>
+
+        <!-- Slide cuối cùng: Hiển thị link messenger -->
+        <div id="slide-final-messenger" class="slide">
+            <h2>Tôi sẽ chờ câu trả lời của bạn</h2>
+            <a href="https://www.facebook.com/quythien.tran.50/" target="_blank" style="color: #c27d88; font-weight: bold; font-size: 18px; text-decoration: none; border-bottom: 2px solid #c27d88; padding-bottom: 3px;">
+                Link Messenger của Thiện
+            </a>
+        </div>
+
+        <!-- ================= NHÁNH 3: TẠM BIỆT & NGẮT KẾT NỐI ================= -->
+        <div id="slide-branch3-goodbye" class="slide">
+            <h2>Cảm ơn bạn vì tất cả.</h2>
+            <p>Chúc Tường Vy luôn cười thật tươi và luôn hạnh phúc. Tạm biệt bạn.</p>
+            <p style="font-size: 12px; color: #a19295; margin-top: 30px;" id="countdownText">Trang web sẽ ngắt kết nối sau 30 giây...</p>
+        </div>
+
+    </div>
+
+    <script>
+        // Hàm xử lý hiển thị Slide chuyển đổi mượt mà
+        function showSlide(slideId) {
+            document.querySelectorAll('.slide').forEach(slide => {
+                slide.classList.remove('active');
+            });
+            document.getElementById(slideId).classList.add('active');
+
+            // Nếu qua slide video, tự phát video
+            if(slideId === 'slide-video') {
+                document.getElementById('myVideo').play();
+            } else {
+                document.getElementById('myVideo').pause();
+            }
+        }
+
+        // Kiểm tra hợp lệ Tên Tường Vy
+        function checkName() {
+            let input = document.getElementById('nameInput').value.trim().toLowerCase();
+            let validNames = ["bùi ngọc tường vy", "tường vy", "bui ngoc tuong vy", "tuong vy"];
+
+            if (validNames.includes(input)) {
+                document.getElementById('errorText').style.display = 'none';
+                showSlide('slide-welcome'); // Chuyển đến slide chào mừng
+            } else {
+                document.getElementById('errorText').style.display = 'block';
+            }
+        }
+
+        // Xử lý hiển thị Ảnh 1 hoặc Ảnh 2 ở Nhánh 2
+        function showImageSlide(type) {
+            if (type === 1) {
+                showSlide('slide-img1');
+            } else {
+                showSlide('slide-img2');
+            }
+        }
+
+        // Kích hoạt Nhánh 3 (Ngắt kết nối sau 30s)
+        function goToBranch3() {
+            startDisconnectProcess();
+        }
+
+        function goToBranch3FromRegret() {
+            startDisconnectProcess();
+        }
+
+        // Xử lý logic đếm ngược 30 giây và làm biến mất trang web theo sơ đồ
+        function startDisconnectProcess() {
+            showSlide('slide-branch3-goodbye');
+            let timeLeft = 30;
+            
+            let interval = setInterval(() => {
+                timeLeft--;
+                if(document.getElementById('countdownText')) {
+                    document.getElementById('countdownText').innerText = `Trang web sẽ ngắt kết nối sau ${timeLeft} giây...`;
+                }
+                
+                if (timeLeft <= 0) {
+                    clearInterval(interval);
+                    let container = document.getElementById('mainContainer');
+                    container.classList.add('disconnected');
+                    container.innerHTML = "<h2>[Đã ngắt kết nối]</h2><p>Trang web đã tự động hủy toàn bộ dữ liệu.</p>";
+                    document.body.style.background = "#000";
+                }
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
